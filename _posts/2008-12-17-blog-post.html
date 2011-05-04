@@ -1,0 +1,97 @@
+---
+layout: post
+title: Подмена Синглтонов
+date: 2008-12-17 07:14:00 +0200
+---
+![](http://2.bp.blogspot.com/_MzPDIAgS1ow/SYWiiNXWgDI/AAAAAAAAJr4/rMPEwUK1HsM/s320/sngleton.jpg){: border="0" #BLOGGER_PHOTO_ID_5297819245258113074 style="cursor: hand; cursor: pointer; display: block; height: 234px; margin: 0px auto 10px; text-align: center; width: 320px;"}  
+Недавно мне в очередной раз пришлось работать с кодом, полученным в наследство. И я, как честный преверженец [TDD][1], решил предже всего написать тесты на уже существующий класс. К своему огорчению сразу же обнаружил в коде вызов следующего вида: <span style="font-style: italic;">IdGenerator.getInstance()</span>. Да, это он самый, \"любимый\" нами [синглтон][2].  
+<a name="more" />  
+  
+UserService.java:  
+    package example;public class UserService {  public User createUser(String name) {    int id = IdGenerator.getInstance().generateId(name);    return new User(id, name);  }}
+
+  
+User.java:  
+    package example;public class User {  private final int id;  private final String name;  public User(int id, String name) {    this.id = id;    this.name = name;  }  public int getId() {    return id;  }  public String getName() {    return name;  }}
+
+  
+Большинство разработчиков не любят синглтоны, как минимум из-за ряда следующих недостатков:  
+* Путаница в зависимостях между
+  классами. Синглтоны в коде, в основном,
+  появляются неожиданно и при беглом
+  просмотре их заметить сложно.
+* Усложняют последующие изменения в
+  системе. При использовании синглтона
+  будет гораздо сложнее вынести его API в
+  интерфейс и иметь несколько
+  реализаций для разных клиентов.
+* Препятствуют тестируемости кода.
+
+  
+  
+Дабы не вдаваться в подробности и не ввязываться в религиозные споры замечу сразу советую почитать статью: [\"Why Singletons Are Controversial\"][3].  
+  
+В связи с тем, что живем мы в далеком от идеала мире и у нас не всегда есть возможность что-то изменить, ингода нам приходится иметь дело с кодом, который нам нельзя сильно рафакторить по определенным причинам. Поэтому, вернемся все-таки к ситуации когда у нас есть синглтон (<span style="font-weight: bold;">IdGenerator</span>) и класс (<span style="font-weight: bold;">UserService</span>), который его использует.  
+  
+IdGenerator.java:  
+    package example;import java.util.Random;public final class IdGenerator {  private static IdGenerator instance = new IdGenerator();  private IdGenerator() {  }  public static IdGenerator getInstance() {    return instance;  }  public int generateId(String name) {    return new Random().nextInt();  }}
+
+  
+И теперь попробуем написать тест к классу (<span style="font-weight: bold;">UserService</span>), зависящему от синглтона (<span style="font-weight: bold;">IdGenerator</span>).  
+  
+UserServiceTest:  
+    package example;import static org.junit.Assert.assertEquals;import static org.junit.Assert.assertNotNull;import org.junit.After;import org.junit.Before;import org.junit.Test;public class UserServiceTest {  private UserService service;  @Before  public void setUp() throws Exception {    service = new UserService();  }  @After  public void tearDown() throws Exception {    service = null;  }  @Test  public void createUser() {    User user = service.createUser("john");    assertNotNull(user);    // assertEquals(???, user.getId());    assertEquals("john", user.getName());  }}
+
+  
+А вот далее попытаемся проверить значение ожидаемого id пользователя: <span style="font-style: italic;">assertEquals(???, user.getId())</span>. Согласитесь, ситуация не из простых? К тому же, допустим, что <span style="font-weight: bold;">IdGenerator</span> использует для генерации id не простой рендомайзер, а полноценную БД. В голову приходят только мысли про [Mock Objects][4]. Но тут так просто не выкрутиться с любимым [EasyMock][5] или [JMock][6], потому как не один из них не умеет подменять статические методы. И тут мы вспоминаем про третий пункт за что мы так не любим синглтоны.  
+  
+Немного подумав я решил, что все-таки должен быть способ заменить вызов статического метода в процессе тестирования. А уже в подмененном методе <span style="font-weight: bold;">getInstance</span> вернуть mock <span style="font-weight: bold;">IdGenerator</span>.  
+  
+Давайте рассмотрим, что для этого нужно:  
+1.  Иметь возможность при загрузке
+    класса выполнить его модификаци. А
+    именно подсунуть ему свою реализацию
+    метода <span style="font-weight: bold;">getInstance</span>.
+2.  Создать наследника final класса <span
+    style="font-weight: bold;">IdGenerator</span>.
+
+  
+На первый взгляд может показаться, что это невозможно. После недолгих поисков я наткнулся на [JMockit][7], который позволяет изменять в runtime статические методы классов и даже конструкторы. Но основным его недостатком является необходимость в дополнительных параметрах запуска Java. И так, еще немного поискав я нашел другое средство: [PowerMock][8]. Список его возможностей меня сразу же убедил в том, что префикс \"Power\" в его названии действительно оправдан.  
+  
+Вот, небольшой перечень того, что <span style="font-weight: bold;">PowerMock</span> умеет делать:  
+* Mocking статических методов
+* Mocking final методов и классов
+* Mocking private методов
+* Обход инкапсуляции
+* Mock конструкторов
+* Подавлять нежелательно поведение
+
+  
+Больше всего порадовала тесная интеграция с <span style="font-weight: bold;">EasyMock</span>.  
+  
+Вот, собственно, и сам тест для упрямого <span style="font-weight: bold;">UserService</span>.  
+  
+UserServiceTest:  
+    package example;import static org.easymock.EasyMock.expect;import static org.junit.Assert.assertEquals;import static org.junit.Assert.assertNotNull;import static org.powermock.api.easymock.PowerMock.createMock;import static org.powermock.api.easymock.PowerMock.mockStatic;import static org.powermock.api.easymock.PowerMock.replayAll;import static org.powermock.api.easymock.PowerMock.verifyAll;import org.junit.After;import org.junit.Before;import org.junit.Test;import org.junit.runner.RunWith;import org.powermock.core.classloader.annotations.PrepareForTest;import org.powermock.modules.junit4.PowerMockRunner;@PrepareForTest(IdGenerator.class)@RunWith(PowerMockRunner.class)public class UserServiceTest {  private UserService service;  private IdGenerator mockIdGenerator;  @Before  public void setUp() throws Exception {    service = new UserService();    mockIdGenerator = createMock(IdGenerator.class);    mockStatic(IdGenerator.class);  }  @After  public void tearDown() throws Exception {    service = null;    mockIdGenerator = null;  }  @Test  public void createUser() {    expect(IdGenerator.getInstance()).andReturn(mockIdGenerator);    expect(mockIdGenerator.generateId("john")).andReturn(1234);    replayAll();    User user = service.createUser("john");    assertNotNull(user);    assertEquals(1234, user.getId());    assertEquals("john", user.getName());    verifyAll();  }}
+
+  
+Кстати, это же решение подходит для тестирования кода, который зависит от системных классов. Например, можно подменить вызов метода: <span style="font-style: italic;">System.currentTimeMillis()</span>.  
+  
+На этом буду закругляться. Единственное, хочу упомянуть, что в любом случае следует несколько раз подумать, прежде чем оставлять вызов синглтона в коде. Тех же требований можно достичь гораздо меньшей ценой с помощью [Dependency Injection][9] и различных фреймворков вроде [Spring][10] и [Guice][11].<div class="blogger-post-footer">
+![](https://blogger.googleusercontent.com/tracker/8677550483635565983-7964508185974200824?l=blog.vityuk.com){:
+width="1" height="1"}
+</div>
+
+
+
+[1]: http://en.wikipedia.org/wiki/Test-driven_development 
+[2]: http://ru.wikipedia.org/wiki/%D0%9E%D0%B4%D0%B8%D0%BD%D0%BE%D1%87%D0%BA%D0%B0_%28%D1%88%D0%B0%D0%B1%D0%BB%D0%BE%D0%BD_%D0%BF%D1%80%D0%BE%D0%B5%D0%BA%D1%82%D0%B8%D1%80%D0%BE%D0%B2%D0%B0%D0%BD%D0%B8%D1%8F%29 
+[3]: http://code.google.com/p/google-singleton-detector/wiki/WhySingletonsAreControversial 
+[4]: http://en.wikipedia.org/wiki/Mock_object 
+[5]: http://www.easymock.org/ 
+[6]: http://www.jmock.org/ 
+[7]: https://jmockit.dev.java.net/ 
+[8]: http://code.google.com/p/powermock/ 
+[9]: http://en.wikipedia.org/wiki/Dependency_injection 
+[10]: http://www.springsource.org/ 
+[11]: http://code.google.com/p/google-guice/ 

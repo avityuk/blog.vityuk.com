@@ -1,0 +1,98 @@
+---
+layout: post
+title: Чем опасно логирование
+date: 2009-02-15 10:53:00 +0200
+---
+<div class="separator" style="clear: both; text-align: center;">
+![](http://1.bp.blogspot.com/_MzPDIAgS1ow/SY_wAoSR8wI/AAAAAAAAJt4/m0NJppz2yfQ/s320/The_Most_poisonous_frog.jpg){:
+border="0" #BLOGGER_PHOTO_ID_5300719180043121410 style="cursor: pointer;
+display: block; height: 230px; margin: 0px auto 10px; text-align:
+center; width: 320px;"}
+</div>
+
+Большинство современных приложений не обходится без логирования. Почти каждый разработчик, так или иначе, знаком с тем как это делается. Для Java существует довольно обширный набор библиотек для удобного логирования: [Log4J][1], [Jakarta Commons Logging][2], [SLF4J][3], [Logback][4] и [Java Logging API][5] и т.д.  
+  
+Существующие библиотеки позволяют очень удобно разграничить вывод информации об ошибках, предупреждений, информационных сообщений и отладочной информации. Так же, позволяют настроить предпочитаемую степень логирование непосредственно перед запуском приложения.  
+  
+Но, к своему удивлению, я недавно заметил, что большинство разработчиков пользуются логированием неправильно. \"Что значит неправильно?\", - удивитесь Вы.  
+<a name="more" /> Взглянем, к примеру, на типичную инструкцию для вывода отладочной информации:  
+    log.debug("Processing " + orders.size() + " orders: " + orders);
+
+Это самый обычный вывод отладочной информации о том, что сейчас начнут обрабатываться определенный список заказов. Давайте разберемся что происходит при логированиее сообщения:  
+1.  Выполняется преобразование <span
+    style="font-style: italic;">orders.size()</span> в строку.
+2.  Конкатенируется строка <span style="font-style:
+    italic;">\"Processing \"</span> с преобразованным
+    <span style="font-style: italic;">orders.size()</span>.
+3.  Полученная строка, в свою очередь,
+    конкатенируется с <span style="font-style:
+    italic;">\" orders: \"</span>.
+4.  Здесь происходит самое страшное: для
+    каждого элемента списка <span
+    style="font-style: italic;">orders</span> вызывается
+    метод <span style="font-style: italic;">toString()</span>.
+5.  Полученная строка добавляется к уже
+    существующей.
+6.  Библиотека для логирование
+    проверяет включено-ли логирование
+    для уровня DEBUG.
+7.  Если уровень DEBUG логируется,
+    выполняется запись в журнал лога.
+
+  
+Вы только подумайте, что все, кроме последнего пункта выполняются даже при выключенном логировании отладочной информации. Даже, если учитывать то, что компилятор оптимизирует конкатенацию строк и [заменит ее на StringBuilder][6], накладные рассходы могут быть просто коллосальными при условии, что список немаленький и объекты в списке имееют перегруженные методы <span style="font-style: italic;">toString()</span>.  
+  
+Как же исправить ситуацию? Для этого перечисленные быблиотеки логирования предоставляют метододы вида: <span style="font-style: italic;">is\*Enabled()</span>. Приведенная строка будет теперь выглядить следующим образом:  
+    if (log.isDebugEnabled()) {  log.debug("Processing " + orders.size() + " orders: " + orders);}
+
+Хотя она значительно устрашает код, все же лучше взять за правило использовать данную проверку всегда, когда в строке логирования выводятся какие-либо данные. На моем предыдущем проекте это правило даже было в Code Conventions.  
+  
+По личному опыту могу сказать, что люди иногда слишком сильно занимаются оптимизацией производительности, но на такие вещи даже не обращают внимания. Для этого я решил немного протестировать использование различных подходов при логировании с использованием <span style="font-weight: bold;">Log4J</span>.  
+  
+Тест с использованием конкатенации и без дополнительных проверок.  
+TestConcat:  
+    package test.log;import java.util.List;import org.apache.log4j.Logger;public class TestConcat {  private static final Logger log = Logger.getLogger(TestConcat.class);  private static final int NUMBER = 1000;  private static final int ITERATIONS = 10000;  public static void main(String[] args) {    List<Order> orders = OrderGenerator.generate(NUMBER);    for (int i = 0; i < ITERATIONS; i++) {      doWork(orders);    }    TimeCounter counter = new TimeCounter().start();    for (int i = 0; i < ITERATIONS; i++) {      doWork(orders);    }    counter.stop();    System.out.println("Time taken: " + counter.get());  }  private static void doWork(List<Order> orders) {    log.debug("Processing " + orders.size() + " orders: " + orders);    List<Order> processedOrders = OrderProcessor.process(orders);    log.debug("Processed " + orders.size() + " orders: " + orders        + " with result: " + processedOrders);  }}
+
+  
+Тест с использованием конкатенации с проверкой уровня логирования.  
+TestConditionalConcat:  
+    package test.log;import java.util.List;import org.apache.log4j.Logger;public class TestConditionalConcat {  private static final Logger log = Logger      .getLogger(TestConditionalConcat.class);  private static final int NUMBER = 1000;  private static final int ITERATIONS = 10000;  public static void main(String[] args) {    List<Order> orders = OrderGenerator.generate(NUMBER);    for (int i = 0; i < ITERATIONS; i++) {      doWork(orders);    }    TimeCounter counter = new TimeCounter().start();    for (int i = 0; i < ITERATIONS; i++) {      doWork(orders);    }    counter.stop();    System.out.println("Time taken: " + counter.get());  }  private static void doWork(List<Order> orders) {    if (log.isDebugEnabled()) {      log.debug("Processing " + orders.size() + " orders: " + orders);    }    List<Order> processedOrders = OrderProcessor.process(orders);    if (log.isDebugEnabled()) {      log.debug("Processed " + orders.size() + " orders: " + orders          + " with result: " + processedOrders);    }  }}
+
+  
+Тест с использованием библиотеки-фасада [SLF4J][3]. Эта библиотека является оберткой для одной из существующих систем логирования (в нашем случае <span style="font-weight: bold;">Log4J</span>, хотя сам бы я предпочел <span style="font-weight: bold;">Logback</span>). В нашем случае интересным ее преимуществом будет то, что вместо конкатенации в ней используется концепция упрощенной форматной строки. Такая форма вызова остается достаточно простой и не требует дополнительных проверок уровня в клиентском коде.  
+TestFormat:  
+    package test.log;import java.util.List;import org.slf4j.Logger;import org.slf4j.LoggerFactory;public class TestFormat {  private static final Logger log = LoggerFactory.getLogger(TestFormat.class);  private static final int NUMBER = 1000;  private static final int ITERATIONS = 10000;  public static void main(String[] args) {    List<Order> orders = OrderGenerator.generate(NUMBER);    for (int i = 0; i < ITERATIONS; i++) {      doWork(orders);    }    TimeCounter counter = new TimeCounter().start();    for (int i = 0; i < ITERATIONS; i++) {      doWork(orders);    }    counter.stop();    System.out.println("Time taken: " + counter.get());  }  private static void doWork(List<Order> orders) {    log.debug("Processing {} orders: {}", orders.size(), orders);    List<Order> processedOrders = OrderProcessor.process(orders);    log.debug("Processed {} orders: {} with result: {}",        new Object[] { orders.size(), orders, processedOrders });  }}
+
+  
+Ниже следуют используемые в тестах классы.  
+Order.java:  
+    package test.log;import java.util.Date;public class Order implements Comparable<Order> {  private long id;  private long customerId;  private Date orderDate;  private String details;  public long getId() {    return id;  }  public void setId(long id) {    this.id = id;  }  public long getCustomerId() {    return customerId;  }  public void setCustomerId(long customerId) {    this.customerId = customerId;  }  public Date getOrderDate() {    return orderDate;  }  public void setOrderDate(Date orderDate) {    this.orderDate = orderDate;  }  public String getDetails() {    return details;  }  public void setDetails(String details) {    this.details = details;  }  public int compareTo(Order otherOrder) {    return orderDate.compareTo(otherOrder.orderDate);  }  @Override  public String toString() {    StringBuilder builder = new StringBuilder();    builder.append("[");    builder.append("id = ");    builder.append(id);    builder.append(", customerId = ");    builder.append(customerId);    builder.append(", orderDate = ");    builder.append(orderDate);    builder.append(", details = ");    builder.append(details);    builder.append("]");    return builder.toString();  }}
+
+OrderGenerator.java:  
+    package test.log;import java.util.ArrayList;import java.util.Date;import java.util.List;public class OrderGenerator {  public static List<Order> generate(int number) {    List<Order> Orders = new ArrayList<Order>(number);    long date = System.currentTimeMillis();    for (int i = 0; i < number; i++) {      Order Order = new Order();      Order.setId(1L + i);      Order.setCustomerId(1000000L + i);      Order.setOrderDate(new Date(date + i * number));      Order.setDetails("Order " + i);      Orders.add(Order);    }    return Orders;  }}
+
+OrderProcessor.java:  
+    package test.log;import java.util.ArrayList;import java.util.Collections;import java.util.List;public class OrderProcessor {  public static List<Order> process(List<Order> orders) {    List<Order> processedOrders = new ArrayList<Order>(orders);    Collections.sort(processedOrders);    return processedOrders;  }}
+
+TimeCounter.java:  
+    package test.log;public class TimeCounter {  private long start;  private long all = 0L;  public TimeCounter start() {    start = System.currentTimeMillis();    return this;  }  public TimeCounter stop() {    long stop = System.currentTimeMillis();    all += stop - start;    start = 0L;    return this;  }  public long get() {    return all;  }}
+
+  
+В результате выполнения тестов получилось примерно то, что я ожидал увидеть:  
+[![](http://2.bp.blogspot.com/_MzPDIAgS1ow/SZgNGDOH90I/AAAAAAAAJuQ/nB423BfSE70/s400/graph.png){: border="0" #BLOGGER_PHOTO_ID_5303002958823683906 style="cursor: hand; cursor: pointer; display: block; height: 300px; margin: 0px auto 10px; text-align: center; width: 400px;"}][7]{: onblur="try {parent.deselectBloggerImageGracefully();} catch(e) {}"}  
+На 10M элементов из-за неправильного логирования получается деградация производительности в 185 раз. Так же хочется отметить, что использование фасада <span style="font-weight: bold;">SLF4J</span> практически не замедляет приложение, но предоставляет очевидные преимущества.  
+  
+Надеюсь, что теперь те, кто до этого неправильно использовал логирование не будут повторять свои ошибки, а остальные напомнят себе ещё раз об этом. Ещё раз хочу обратить внимание на относительно новую библиотеку <span style="font-weight: bold;">SLF4J</span> и советую рассмотреть ее интеграцию с уже существующими системами логирования.<div class="blogger-post-footer">
+![](https://blogger.googleusercontent.com/tracker/8677550483635565983-2400373243331228768?l=blog.vityuk.com){:
+width="1" height="1"}
+</div>
+
+
+
+[1]: http://logging.apache.org/log4j/1.2/index.html 
+[2]: http://commons.apache.org/logging/ 
+[3]: http://www.slf4j.org/ 
+[4]: http://logback.qos.ch/ 
+[5]: http://java.sun.com/javase/6/docs/technotes/guides/logging/overview.html 
+[6]: http://kaioa.com/node/59 
+[7]: http://2.bp.blogspot.com/_MzPDIAgS1ow/SZgNGDOH90I/AAAAAAAAJuQ/nB423BfSE70/s1600-h/graph.png 
