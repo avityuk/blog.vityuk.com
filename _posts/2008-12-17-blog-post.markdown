@@ -7,9 +7,18 @@ date: 2008-12-17 07:14:00 +0200
 Недавно мне в очередной раз пришлось работать с кодом, полученным в наследство. И я, как честный преверженец [TDD][1], решил предже всего написать тесты на уже существующий класс. К своему огорчению сразу же обнаружил в коде вызов следующего вида: <span style="font-style: italic;">IdGenerator.getInstance()</span>. Да, это он самый, \"любимый\" нами [синглтон][2].  
 <a name="more" />  
   
-UserService.java:  
-    package example;public class UserService {  public User createUser(String name) {    int id = IdGenerator.getInstance().generateId(name);    return new User(id, name);  }}
+UserService.java:
+{% highlight java %}
+package example;
 
+public class UserService {
+  public User createUser(String name) {
+    int id = IdGenerator.getInstance().generateId(name);
+
+    return new User(id, name);
+  }
+}
+{% endhighlight %}
   
 User.java:  
     package example;public class User {  private final int id;  private final String name;  public User(int id, String name) {    this.id = id;    this.name = name;  }  public int getId() {    return id;  }  public String getName() {    return name;  }}
