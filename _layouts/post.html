@@ -2,5 +2,11 @@
 layout: default
 ---
 <div id="post">
-{{ content }}
+	<h2>{{ page.title }}</h2>
+	{% if page.poster %}
+	<div id="poster">
+		<img src="{{ page.poster.url }}" width="{{ page.poster.width }}" height="{{ page.poster.height }}" />
+	</div>
+	{% endif %}
+	{{ content }}
 </div>
