@@ -1,4 +1,4 @@
 auto: true
 permalink: /:year/:month/:title.html
-markup: kramdown
+markdown: kramdown
 pygments: true
