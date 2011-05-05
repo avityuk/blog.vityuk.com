@@ -2,7 +2,7 @@
 layout: post
 title: Getting started with AppEngine + Scala
 tags: [sbt, google, web, scala, appengine]
-poster: {url: 'http://2.bp.blogspot.com/_MzPDIAgS1ow/TAaZmre_WXI/AAAAAAAAOFc/a2_E3nAacQI/s320/scala_appengine.png', width: '315px', height: '186px'}
+image: {url: 'http://2.bp.blogspot.com/_MzPDIAgS1ow/TAaZmre_WXI/AAAAAAAAOFc/a2_E3nAacQI/s320/scala_appengine.png', width: '315px', height: '186px'}
 date: 2010-06-02 21:41:00 +0300
 ---
 This time, after long time-out I decided to continue blogging in english. Sorry for my english in advance, but I will try to do my best ;-)I spent some time playing with [Google App Engine][2] and [Scala][3] integration so I think it could be helpful for somebody else. Since they are both innovative technologies I could not resist the temptation to use unusual build tool with self-explanatory name [simple-build-tool][4]. In short, this is Maven-like build tool which actually works with Maven repositories (using Apache Ivy). But instead of boilerplate xml you get Scala code.  

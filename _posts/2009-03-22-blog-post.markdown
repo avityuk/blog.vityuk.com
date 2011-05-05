@@ -2,7 +2,7 @@
 layout: post
 title: Фабричный метод
 tags: [java, error handling, pattern, factory method]
-poster: {url: 'http://2.bp.blogspot.com/_MzPDIAgS1ow/ScY48e6QaTI/AAAAAAAAJ6Y/WkCsn9_myxU/s400/magican.jpg', width: '304px', height: '400px'}
+image: {url: 'http://2.bp.blogspot.com/_MzPDIAgS1ow/ScY48e6QaTI/AAAAAAAAJ6Y/WkCsn9_myxU/s400/magican.jpg', width: '304px', height: '400px'}
 date: 2009-03-22 13:02:00 +0200
 ---
 В этот раз речь пойдет о паттернах проектирования. Если быть точнее — **Статическом фабричном методе ([Static Factory Method][1])**. Вкратце, он призван для того, чтобы инкапсулировать процесс создания объекта.  

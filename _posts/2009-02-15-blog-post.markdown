@@ -2,7 +2,7 @@
 layout: post
 title: Чем опасно логирование
 tags: [performance, java, logging]
-poster: {url: 'http://1.bp.blogspot.com/_MzPDIAgS1ow/SY_wAoSR8wI/AAAAAAAAJt4/m0NJppz2yfQ/s320/The_Most_poisonous_frog.jpg', width: '320px', height: '230px'}
+image: {url: 'http://1.bp.blogspot.com/_MzPDIAgS1ow/SY_wAoSR8wI/AAAAAAAAJt4/m0NJppz2yfQ/s320/The_Most_poisonous_frog.jpg', width: '320px', height: '230px'}
 date: 2009-02-15 10:53:00 +0200
 ---
 Большинство современных приложений не обходится без логирования. Почти каждый разработчик, так или иначе, знаком с тем как это делается. Для Java существует довольно обширный набор библиотек для удобного логирования: [Log4J][1], [Jakarta Commons Logging][2], [SLF4J][3], [Logback][4] и [Java Logging API][5] и т.д.  

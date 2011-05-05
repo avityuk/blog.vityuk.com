@@ -2,7 +2,7 @@
 layout: post
 title: How Scala compiler stores meta information
 tags: [reflection, compiler, bytecode, scala]
-poster: {url: 'http://3.bp.blogspot.com/_MzPDIAgS1ow/TPtvknz8OgI/AAAAAAAARLI/mShNq4h6jxc/s320/scala.jpg', width: '320px', height: '253px'}
+image: {url: 'http://3.bp.blogspot.com/_MzPDIAgS1ow/TPtvknz8OgI/AAAAAAAARLI/mShNq4h6jxc/s320/scala.jpg', width: '320px', height: '253px'}
 date: 2010-12-05 12:59:00 +0200
 ---
 I was always wondering how Scala compiler fits into Java class file with all it\'s comprehensive language constructions. I felt there was some magic... Later in Scala 2.8 I faced a problem with calling method with default parameters using reflection. From a quick glance it seemed that there nothing complex. But wait, Scala allows methods overloading and how do you know which method has default parameters?
