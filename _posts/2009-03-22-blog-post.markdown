@@ -1,70 +1,693 @@
 ---
 layout: post
 title: Фабричный метод
+poster: {url: 'http://2.bp.blogspot.com/_MzPDIAgS1ow/ScY48e6QaTI/AAAAAAAAJ6Y/WkCsn9_myxU/s400/magican.jpg', width: '304px', height: '400px'}
 date: 2009-03-22 13:02:00 +0200
 ---
-![](http://2.bp.blogspot.com/_MzPDIAgS1ow/ScY48e6QaTI/AAAAAAAAJ6Y/WkCsn9_myxU/s400/magican.jpg){: border="0" #BLOGGER_PHOTO_ID_5315999021898164530 style="cursor: hand; cursor: pointer; display: block; height: 400px; margin: 0px auto 10px; text-align: center; width: 304px;"}  
-  
-В этот раз речь пойдет о паттернах проектирования. Если быть точнее — <span style="font-weight: bold;">Статическом фабричном методе ([Static Factory Method][1])</span>. Вкратце, он призван для того, чтобы инкапсулировать процесс создания объекта.  
+В этот раз речь пойдет о паттернах проектирования. Если быть точнее — **Статическом фабричном методе ([Static Factory Method][1])**. Вкратце, он призван для того, чтобы инкапсулировать процесс создания объекта.  
   
 Допустим, у нас есть метод, который возвращает определенный набор (список) данных. Этот метод должен иметь возможность вернуть для каждой единицы фактический результат или ошибку. Естественно, что в таком случае исключения бросать нельзя, иначе мы не получим \"хорошие\" данные. Обычно, в таких целях используется объект-контейнер, который хранит или данные или ошибку или просто пустой.  
-<a name="more" />  
-  
-![Response](http://2.bp.blogspot.com/_MzPDIAgS1ow/ScYL6elUhfI/AAAAAAAAJ6I/ooU5hz-_hWI/s400/1.png){: border="0" #BLOGGER_PHOTO_ID_5315949509427365362 style="cursor: pointer; display: block; height: 91px; margin: 0px auto 10px; text-align: center; width: 400px;"}  
-  
-Response.java:  
-    package factory;public final class Response<V, E> {  private final V value;  private final E error;  public Response(V value, E error) {    checkParams(value, error);    this.value = value;    this.error = error;  }  public Response() {    value = null;    error = null;  }  public boolean isEmpty() {    if (value == null && error == null) {      return true;    }    return false;  }  public boolean isSuccess() {    ensureNotEmpty();    if (value == null) {      return false;    }    return true;  }  public V getValue() {    ensureNotEmpty();    ensureSuccess();    return value;  }  public E getError() {    ensureNotEmpty();    ensureError();    return error;  }  private static <V, E> void checkParams(V value, E error) {    if (value == null && error == null) {      throw new IllegalArgumentException("Both error and value cannot be null");    }  }  private void ensureNotEmpty() {    if (isEmpty()) {      throw new IllegalStateException("Operation is not allowed for empty response");    }  }  private void ensureError() {    if (isSuccess()) {      throw new IllegalStateException("Operation is not allowed for success response");    }  }  private void ensureSuccess() {    if (!isSuccess()) {      throw new IllegalStateException("Operation is not allowed for error response");    }  }}
+<a name="more" />
 
-  
-ResponseTest.java:  
-    package factory;import static org.junit.Assert.assertEquals;import static org.junit.Assert.assertFalse;import static org.junit.Assert.assertTrue;import org.junit.Test;public class ResponseTest {  @Test(expected = IllegalArgumentException.class)  public void testResponseWithNulls() {    new Response<Integer, String>(null, null);  }  @Test  public void testResponseSuccess() {    success(150);  }  @Test  public void testResponseError() {    error("test error");  }  @Test  public void testResponseEmpty() {    empty();  }  @Test  public void testIsEmptyWithSuccess() {    Response<Integer, String> success = success(135);    assertFalse(success.isEmpty());  }  @Test  public void testIsEmptyWithError() {    Response<Integer, String> error = error("validation error");    assertFalse(error.isEmpty());  }  @Test  public void testIsEmptyWithEmpty() {    Response<Integer, String> empty = empty();    assertTrue(empty.isEmpty());  }  @Test  public void testIsSuccessWithSuccess() {    Response<Integer, String> success = success(763);    assertTrue(success.isSuccess());  }  @Test  public void testIsSuccessWithError() {    Response<Integer, String> error = error("db error");    assertFalse(error.isSuccess());  }  @Test(expected = IllegalStateException.class)  public void testIsSuccessWithEmpty() {    Response<Integer, String> empty = empty();    empty.isSuccess();  }  @Test  public void testGetValueWithSuccess() {    Response<Integer, String> success = success(921);    assertEquals(Integer.valueOf(921), success.getValue());  }  @Test(expected = IllegalStateException.class)  public void testGetValueWithError() {    Response<Integer, String> error = error("out of service");    error.getValue();  }  @Test(expected = IllegalStateException.class)  public void testGetValueWithEmpty() {    Response<Integer, String> empty = empty();    empty.getValue();  }  @Test(expected = IllegalStateException.class)  public void testGetErrorWithSuccess() {    Response<Integer, String> success = success(48150);    success.getError();  }  @Test  public void testGetErrorWithError() {    Response<Integer, String> error = error("application is broken");    assertEquals("application is broken", error.getError());  }  @Test(expected = IllegalStateException.class)  public void testGetErrorWithEmpty() {    Response<Integer, String> empty = empty();    empty.getError();  }  private static Response<Integer, String> success(Integer successValue) {    return new Response<Integer, String>(successValue, null);  }  private static Response<Integer, String> error(String errorMessage) {    return new Response<Integer, String>(null, errorMessage);  }  private static Response<Integer, String> empty() {    return new Response<Integer, String>();  }}
+![Response](http://2.bp.blogspot.com/_MzPDIAgS1ow/ScYL6elUhfI/AAAAAAAAJ6I/ooU5hz-_hWI/s400/1.png)
 
+*Response.java:*
+{% highlight java %}
+package factory;
+
+public final class Response<V, E> {
+  private final V value;
+  private final E error;
+
+  public Response(V value, E error) {
+    checkParams(value, error);
+
+    this.value = value;
+    this.error = error;
+  }
+
+  public Response() {
+    value = null;
+    error = null;
+  }
+
+  public boolean isEmpty() {
+    if (value == null && error == null) {
+      return true;
+    }
+
+    return false;
+  }
+
+  public boolean isSuccess() {
+    ensureNotEmpty();
+
+    if (value == null) {
+      return false;
+    }
+
+    return true;
+  }
+
+  public V getValue() {
+    ensureNotEmpty();
+    ensureSuccess();
+
+    return value;
+  }
+
+  public E getError() {
+    ensureNotEmpty();
+    ensureError();
+
+    return error;
+  }
+
+  private static <V, E> void checkParams(V value, E error) {
+    if (value == null && error == null) {
+      throw new IllegalArgumentException("Both error and value cannot be null");
+    }
+  }
+
+  private void ensureNotEmpty() {
+    if (isEmpty()) {
+      throw new IllegalStateException("Operation is not allowed for empty response");
+    }
+  }
+
+  private void ensureError() {
+    if (isSuccess()) {
+      throw new IllegalStateException("Operation is not allowed for success response");
+    }
+  }
+
+  private void ensureSuccess() {
+    if (!isSuccess()) {
+      throw new IllegalStateException("Operation is not allowed for error response");
+    }
+  }
+}
+{% endhighlight %}
   
+*ResponseTest.java:*
+{% highlight java %}
+package factory;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
+import org.junit.Test;
+
+public class ResponseTest {
+  @Test(expected = IllegalArgumentException.class)
+  public void testResponseWithNulls() {
+    new Response<Integer, String>(null, null);
+  }
+
+  @Test
+  public void testResponseSuccess() {
+    success(150);
+  }
+
+  @Test
+  public void testResponseError() {
+    error("test error");
+  }
+
+  @Test
+  public void testResponseEmpty() {
+    empty();
+  }
+
+  @Test
+  public void testIsEmptyWithSuccess() {
+    Response<Integer, String> success = success(135);
+
+    assertFalse(success.isEmpty());
+  }
+
+  @Test
+  public void testIsEmptyWithError() {
+    Response<Integer, String> error = error("validation error");
+
+    assertFalse(error.isEmpty());
+  }
+
+  @Test
+  public void testIsEmptyWithEmpty() {
+    Response<Integer, String> empty = empty();
+
+    assertTrue(empty.isEmpty());
+  }
+
+  @Test
+  public void testIsSuccessWithSuccess() {
+    Response<Integer, String> success = success(763);
+
+    assertTrue(success.isSuccess());
+  }
+
+  @Test
+  public void testIsSuccessWithError() {
+    Response<Integer, String> error = error("db error");
+
+    assertFalse(error.isSuccess());
+  }
+
+  @Test(expected = IllegalStateException.class)
+  public void testIsSuccessWithEmpty() {
+    Response<Integer, String> empty = empty();
+
+    empty.isSuccess();
+  }
+
+  @Test
+  public void testGetValueWithSuccess() {
+    Response<Integer, String> success = success(921);
+
+    assertEquals(Integer.valueOf(921), success.getValue());
+  }
+
+  @Test(expected = IllegalStateException.class)
+  public void testGetValueWithError() {
+    Response<Integer, String> error = error("out of service");
+
+    error.getValue();
+  }
+
+  @Test(expected = IllegalStateException.class)
+  public void testGetValueWithEmpty() {
+    Response<Integer, String> empty = empty();
+
+    empty.getValue();
+  }
+
+  @Test(expected = IllegalStateException.class)
+  public void testGetErrorWithSuccess() {
+    Response<Integer, String> success = success(48150);
+
+    success.getError();
+  }
+
+  @Test
+  public void testGetErrorWithError() {
+    Response<Integer, String> error = error("application is broken");
+
+    assertEquals("application is broken", error.getError());
+  }
+
+  @Test(expected = IllegalStateException.class)
+  public void testGetErrorWithEmpty() {
+    Response<Integer, String> empty = empty();
+
+    empty.getError();
+  }
+
+  private static Response<Integer, String> success(Integer successValue) {
+    return new Response<Integer, String>(successValue, null);
+  }
+
+  private static Response<Integer, String> error(String errorMessage) {
+    return new Response<Integer, String>(null, errorMessage);
+  }
+
+  private static Response<Integer, String> empty() {
+    return new Response<Integer, String>();
+  }
+}
+{% endhighlight %}
   
-В этом примере <span style="font-style: italic;">Response</span> содержит два конструктора: один (без параметров) для пустых ответов и второй (с двумя параметрами) для ответов с данным или ошибками. Было бы логично иметь три конструктора, но не смотря на использования <span style="font-style: italic;">generic</span> типов, параметры на самом деле имеют тип <span style="font-style: italic;">Object</span>, соответственно конструктор не может быть перегружен.  
+В этом примере `Response` содержит два конструктора: один (без параметров) для пустых ответов и второй (с двумя параметрами) для ответов с данным или ошибками. Было бы логично иметь три конструктора, но не смотря на использования *generic* типов, параметры на самом деле имеют тип `Object`, соответственно конструктор не может быть перегружен.  
   
-Думаю, что все согласятся, что таким контейнером пользоваться неудобно и немного сбивает с толку конструктор с двумя аргументами, который всегда ожидает одно из значений - <span style="font-style: italic;">null</span>. Сам подход передавать <span style="font-style: italic;">null</span> в метод или конструктор уже считается неправильным (за исключением некоторых случаев).  
+Думаю, что все согласятся, что таким контейнером пользоваться неудобно и немного сбивает с толку конструктор с двумя аргументами, который всегда ожидает одно из значений - `null`. Сам подход передавать `null` в метод или конструктор уже считается неправильным (за исключением некоторых случаев).  
   
 Итак, что, если сделать для каждого типа контейнера статический метод, который будет конструировать для нас соответствующий экземпляр.  
   
-Response.java:  
-    package factory1;public final class Response<V, E> {  private final V value;  private final E error;  public static <V, E> Response<V, E> fromValue(V value) {    return new Response<V, E>(value, null);  }  public static <V, E> Response<V, E> fromError(E error) {    return new Response<V, E>(null, error);  }  public static <V, E> Response<V, E> empty() {    return new Response<V, E>(null, null);  }  private Response(V value, E error) {    this.value = value;    this.error = error;  }  public boolean isEmpty() {    if (value == null && error == null) {      return true;    }    return false;  }  public boolean isSuccess() {    ensureNotEmpty();    if (value == null) {      return false;    }    return true;  }  public V getValue() {    ensureNotEmpty();    ensureSuccess();    return value;  }  public E getError() {    ensureNotEmpty();    ensureError();    return error;  }  private void ensureNotEmpty() {    if (isEmpty()) {      throw new IllegalStateException("Operation is not allowed for empty response");    }  }  private void ensureError() {    if (isSuccess()) {      throw new IllegalStateException("Operation is not allowed for success response");    }  }  private void ensureSuccess() {    if (!isSuccess()) {      throw new IllegalStateException("Operation is not allowed for error response");    }  }}
+*Response.java:*
+{% highlight java %}
+package factory1;
 
-  
-ResponseTest.java  
-    package factory1;import static org.junit.Assert.assertEquals;import static org.junit.Assert.assertFalse;import static org.junit.Assert.assertTrue;import org.junit.Test;public class ResponseTest {  @Test  public void testResponseSuccess() {    success(150);  }  @Test  public void testResponseError() {    error("test error");  }  @Test  public void testResponseEmpty() {    empty();  }  @Test  public void testIsEmptyWithSuccess() {    Response<Integer, String> success = success(135);    assertFalse(success.isEmpty());  }  @Test  public void testIsEmptyWithError() {    Response<Integer, String> error = error("validation error");    assertFalse(error.isEmpty());  }  @Test  public void testIsEmptyWithEmpty() {    Response<Integer, String> empty = empty();    assertTrue(empty.isEmpty());  }  @Test  public void testIsSuccessWithSuccess() {    Response<Integer, String> success = success(763);    assertTrue(success.isSuccess());  }  @Test  public void testIsSuccessWithError() {    Response<Integer, String> error = error("db error");    assertFalse(error.isSuccess());  }  @Test(expected = IllegalStateException.class)  public void testIsSuccessWithEmpty() {    Response<Integer, String> empty = empty();    empty.isSuccess();  }  @Test  public void testGetValueWithSuccess() {    Response<Integer, String> success = success(921);    assertEquals(Integer.valueOf(921), success.getValue());  }  @Test(expected = IllegalStateException.class)  public void testGetValueWithError() {    Response<Integer, String> error = error("out of service");    error.getValue();  }  @Test(expected = IllegalStateException.class)  public void testGetValueWithEmpty() {    Response<Integer, String> empty = empty();    empty.getValue();  }  @Test(expected = IllegalStateException.class)  public void testGetErrorWithSuccess() {    Response<Integer, String> success = success(48150);    success.getError();  }  @Test  public void testGetErrorWithError() {    Response<Integer, String> error = error("application is broken");    assertEquals("application is broken", error.getError());  }  @Test(expected = IllegalStateException.class)  public void testGetErrorWithEmpty() {    Response<Integer, String> empty = empty();    empty.getError();  }  private static Response<Integer, String> success(Integer successValue) {    return Response.fromValue(successValue);  }  private static Response<Integer, String> error(String errorMessage) {    return Response.fromError(errorMessage);  }  private static Response<Integer, String> empty() {    return Response.empty();  }}
+public final class Response<V, E> {
+  private final V value;
+  private final E error;
 
-  
-Методы <span style="font-style: italic;">Response.fromValue()</span>, <span style="font-style: italic;">Response.fromError()</span>, <span style="font-style: italic;">Response.empty()</span> прозрачно для пользователя создают объект. Таким образом, они решают путаницу с конструкторами и даже делают код более осмысленным. Собственно, эти методы и являются <span style="font-style: italic;">статическими фабричными методами</span>.  
-  
-Что же теперь дают нам статические методы? На первый взгляд ничего более, кроме удобного использования. На самом же деле, существуют ещё две полезные возможности фабричных методов:  
-* В отличии от конструкторов, в
-  фабричных методах объект не обязан
-  конструироваться. Это свойство можно
-  использовать для кеширования
-  тяжеловесных объектов.
-* Фабричный метод может вернуть не
-  только экземпляр своего класса, но и
-  любого из подклассов.
+  public static <V, E> Response<V, E> fromValue(V value) {
+    return new Response<V, E>(value, null);
+  }
 
-Для нашего примера нас интересует последнее свойство. Допустим, что наш контейнер на самом деле не один класс, а три отдельных класса: <span style="font-style: italic;">Success</span>, <span style="font-style: italic;">Error</span> и <span style="font-style: italic;">Empty</span>. И каждый из них является наследником <span style="font-style: italic;">Response</span>. Таким образом, каждый класс будет решать свою задачу (хранить данные, ошибку или просто быть пустым).  
-  
-![Response](http://2.bp.blogspot.com/_MzPDIAgS1ow/ScYjGYW89tI/AAAAAAAAJ6Q/r64NrMO2Q18/s400/2.png){: border="0" #BLOGGER_PHOTO_ID_5315975002682357458 style="cursor: pointer; display: block; height: 105px; margin: 0px auto 10px; text-align: center; width: 400px;"}  
-  
-Response.java:  
-    package factory2;public abstract class Response<V, E> {  private static final Response<Object, Object> EMPTY = new Empty<Object, Object>();  public static <V, E> Response<V, E> fromValue(V value) {    if (value == null) {      throw new NullPointerException("Parameter 'value' must be not null.");    }    return new Success<V, E>(value);  }  public static <V, E> Response<V, E> fromError(E error) {    if (error == null) {      throw new NullPointerException("Parameter 'error' must be not null.");    }    return new Error<V, E>(error);  }  @SuppressWarnings("unchecked")  public static <V, E> Response<V, E> empty() {    return (Response<V, E>) EMPTY;  }  private Response() {  }  public abstract boolean isEmpty();  public abstract boolean isSuccess();  public abstract V getValue();  public abstract E getError();  private final static class Success<V, E> extends Response<V, E> {    private final V value;    private Success(V value) {      this.value = value;    }    @Override    public boolean isEmpty() {      return false;    }    @Override    public boolean isSuccess() {      return true;    }    @Override    public V getValue() {      return value;    }    @Override    public E getError() {      throw notAllowedOperationException();    }    private IllegalStateException notAllowedOperationException() {      return new IllegalStateException("Operation is not allowed for success response");    }  }  private final static class Error<V, E> extends Response<V, E> {    private final E error;    private Error(E error) {      this.error = error;    }    @Override    public boolean isEmpty() {      return false;    }    @Override    public boolean isSuccess() {      return false;    }    @Override    public V getValue() {      throw notAllowedOperationException();    }    @Override    public E getError() {      return error;    }    private static IllegalStateException notAllowedOperationException() {      return new IllegalStateException("Operation is not allowed for error response");    }  }  private final static class Empty<V, E> extends Response<V, E> {    @Override    public boolean isEmpty() {      return true;    }    @Override    public boolean isSuccess() {      throw notAllowedOperationException();    }    @Override    public V getValue() {      throw notAllowedOperationException();    }    @Override    public E getError() {      throw notAllowedOperationException();    }    private static IllegalStateException notAllowedOperationException() {      return new IllegalStateException("Operation is not allowed for empty response");    }  }}
+  public static <V, E> Response<V, E> fromError(E error) {
+    return new Response<V, E>(null, error);
+  }
 
+  public static <V, E> Response<V, E> empty() {
+    return new Response<V, E>(null, null);
+  }
+
+  private Response(V value, E error) {
+    this.value = value;
+    this.error = error;
+  }
+
+  public boolean isEmpty() {
+    if (value == null && error == null) {
+      return true;
+    }
+
+    return false;
+  }
+
+  public boolean isSuccess() {
+    ensureNotEmpty();
+
+    if (value == null) {
+      return false;
+    }
+
+    return true;
+  }
+
+  public V getValue() {
+    ensureNotEmpty();
+    ensureSuccess();
+
+    return value;
+  }
+
+  public E getError() {
+    ensureNotEmpty();
+    ensureError();
+
+    return error;
+  }
+
+  private void ensureNotEmpty() {
+    if (isEmpty()) {
+      throw new IllegalStateException("Operation is not allowed for empty response");
+    }
+  }
+
+  private void ensureError() {
+    if (isSuccess()) {
+      throw new IllegalStateException("Operation is not allowed for success response");
+    }
+  }
+
+  private void ensureSuccess() {
+    if (!isSuccess()) {
+      throw new IllegalStateException("Operation is not allowed for error response");
+    }
+  }
+}
+{% endhighlight %}
+
+*ResponseTest.java:*
+{% highlight java %}
+package factory1;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
+import org.junit.Test;
+
+public class ResponseTest {
+  @Test
+  public void testResponseSuccess() {
+    success(150);
+  }
+
+  @Test
+  public void testResponseError() {
+    error("test error");
+  }
+
+  @Test
+  public void testResponseEmpty() {
+    empty();
+  }
+
+  @Test
+  public void testIsEmptyWithSuccess() {
+    Response<Integer, String> success = success(135);
+
+    assertFalse(success.isEmpty());
+  }
+
+  @Test
+  public void testIsEmptyWithError() {
+    Response<Integer, String> error = error("validation error");
+
+    assertFalse(error.isEmpty());
+  }
+
+  @Test
+  public void testIsEmptyWithEmpty() {
+    Response<Integer, String> empty = empty();
+
+    assertTrue(empty.isEmpty());
+  }
+
+  @Test
+  public void testIsSuccessWithSuccess() {
+    Response<Integer, String> success = success(763);
+
+    assertTrue(success.isSuccess());
+  }
+
+  @Test
+  public void testIsSuccessWithError() {
+    Response<Integer, String> error = error("db error");
+
+    assertFalse(error.isSuccess());
+  }
+
+  @Test(expected = IllegalStateException.class)
+  public void testIsSuccessWithEmpty() {
+    Response<Integer, String> empty = empty();
+
+    empty.isSuccess();
+  }
+
+  @Test
+  public void testGetValueWithSuccess() {
+    Response<Integer, String> success = success(921);
+
+    assertEquals(Integer.valueOf(921), success.getValue());
+  }
+
+  @Test(expected = IllegalStateException.class)
+  public void testGetValueWithError() {
+    Response<Integer, String> error = error("out of service");
+
+    error.getValue();
+  }
+
+  @Test(expected = IllegalStateException.class)
+  public void testGetValueWithEmpty() {
+    Response<Integer, String> empty = empty();
+
+    empty.getValue();
+  }
+
+  @Test(expected = IllegalStateException.class)
+  public void testGetErrorWithSuccess() {
+    Response<Integer, String> success = success(48150);
+
+    success.getError();
+  }
+
+  @Test
+  public void testGetErrorWithError() {
+    Response<Integer, String> error = error("application is broken");
+
+    assertEquals("application is broken", error.getError());
+  }
+
+  @Test(expected = IllegalStateException.class)
+  public void testGetErrorWithEmpty() {
+    Response<Integer, String> empty = empty();
+
+    empty.getError();
+  }
+
+  private static Response<Integer, String> success(Integer successValue) {
+    return Response.fromValue(successValue);
+  }
+
+  private static Response<Integer, String> error(String errorMessage) {
+    return Response.fromError(errorMessage);
+  }
+
+  private static Response<Integer, String> empty() {
+    return Response.empty();
+  }
+}
+{% endhighlight %}
   
-ResponseTest.java:  
-    package factory2;import static org.junit.Assert.assertEquals;import static org.junit.Assert.assertFalse;import static org.junit.Assert.assertTrue;import org.junit.Test;public class ResponseTest {  @Test  public void testResponseSuccess() {    success(150);  }  @Test(expected = NullPointerException.class)  public void testResponseSuccessWithNull() {    success(null);  }  @Test  public void testResponseError() {    error("test error");  }  @Test(expected = NullPointerException.class)  public void testResponseErrorWithNull() {    error(null);  }  @Test  public void testResponseEmpty() {    empty();  }  @Test  public void testIsEmptyWithSuccess() {    Response<Integer, String> success = success(135);    assertFalse(success.isEmpty());  }  @Test  public void testIsEmptyWithError() {    Response<Integer, String> error = error("validation error");    assertFalse(error.isEmpty());  }  @Test  public void testIsEmptyWithEmpty() {    Response<Integer, String> empty = empty();    assertTrue(empty.isEmpty());  }  @Test  public void testIsSuccessWithSuccess() {    Response<Integer, String> success = success(763);    assertTrue(success.isSuccess());  }  @Test  public void testIsSuccessWithError() {    Response<Integer, String> error = error("db error");    assertFalse(error.isSuccess());  }  @Test(expected = IllegalStateException.class)  public void testIsSuccessWithEmpty() {    Response<Integer, String> empty = empty();    empty.isSuccess();  }  @Test  public void testGetValueWithSuccess() {    Response<Integer, String> success = success(921);    assertEquals(Integer.valueOf(921), success.getValue());  }  @Test(expected = IllegalStateException.class)  public void testGetValueWithError() {    Response<Integer, String> error = error("out of service");    error.getValue();  }  @Test(expected = IllegalStateException.class)  public void testGetValueWithEmpty() {    Response<Integer, String> empty = empty();    empty.getValue();  }  @Test(expected = IllegalStateException.class)  public void testGetErrorWithSuccess() {    Response<Integer, String> success = success(48150);    success.getError();  }  @Test  public void testGetErrorWithError() {    Response<Integer, String> error = error("application is broken");    assertEquals("application is broken", error.getError());  }  @Test(expected = IllegalStateException.class)  public void testGetErrorWithEmpty() {    Response<Integer, String> empty = empty();    empty.getError();  }  private static Response<Integer, String> success(Integer successValue) {    return Response.fromValue(successValue);  }  private static Response<Integer, String> error(String errorMessage) {    return Response.fromError(errorMessage);  }  private static Response<Integer, String> empty() {    return Response.empty();  }}
-
+Методы `Response.fromValue()`, `Response.fromError()`, `Response.empty()` прозрачно для пользователя создают объект. Таким образом, они решают путаницу с конструкторами и даже делают код более осмысленным. Собственно, эти методы и являются *статическими фабричными методами*.  
   
-Интерфейс остался прежним, соответственно, тесты те же, что и в предыдущем примере. Последний пример имеет не только более опрятную реализацию, к тому же, по производительности и расходу памяти он более оптимален: поведение большинства методов определяется статически в зависимости от конкретной реализации, а ссылки сами по себе (даже пустые) используют память. Более того, в качестве пустого контейнера (<span style="font-style: italic;">Response.Empty</span>) всегда возвращается один и тот же объект, который создается только один раз (такой себе [Синглтон][2]). Кстати, в качестве разминки, советую попробовать реализовать правильные методы [equals][3] и [hashCode][4] для нашего <span style="font-style: italic;">Response</span> (советую начать с тестов). Думаю, что никто не будет отрицать преимуществ использования паттерна <span style="font-weight: bold;">Фабричный метод</span> для нашей задачи. Лично у меня для себя есть такое правило: если есть частично или полностью [Immutable object][5], то всегда стоит подумать о том, чтобы сделать <span style="font-style: italic;">фабричный метод</span> вместо конструктора, даже когда он явно делает то же самое, что и конструктор. Да, я знаю, это может немного противоречить принципу [YAGNI][6]. Но в таких случаях я себя оправдываю тем, что статические методы выглядят красивее и порой удобней читаются. Далее, в награду, у меня всегда есть возможность что-то поменять внутри класса или сделать некую оптимизацию не затрагивая клиентский код. В нагрузку, советую посмотреть на реализацию метода [Integer.valueOf()][7]. Для меня, в свое время, это было очень познавательно.<div class="blogger-post-footer">
-![](https://blogger.googleusercontent.com/tracker/8677550483635565983-9099425843784358704?l=blog.vityuk.com){:
-width="1" height="1"}
-</div>
+Что же теперь дают нам статические методы? На первый взгляд ничего более, кроме удобного использования. На самом же деле, существуют ещё две полезные возможности фабричных методов:
 
+* В отличии от конструкторов, в фабричных методах объект не обязан конструироваться. Это свойство можно использовать для кеширования тяжеловесных объектов.
+* Фабричный метод может вернуть не только экземпляр своего класса, но и любого из подклассов.
 
+Для нашего примера нас интересует последнее свойство. Допустим, что наш контейнер на самом деле не один класс, а три отдельных класса: `Success`, `Error` и `Empty`. И каждый из них является наследником `Response`. Таким образом, каждый класс будет решать свою задачу (хранить данные, ошибку или просто быть пустым).  
+  
+![Response](http://2.bp.blogspot.com/_MzPDIAgS1ow/ScYjGYW89tI/AAAAAAAAJ6Q/r64NrMO2Q18/s400/2.png)  
+  
+*Response.java:*
+{% highlight java %}
+package factory2;
+
+public abstract class Response<V, E> {
+  private static final Response<Object, Object> EMPTY = new Empty<Object, Object>();
+
+  public static <V, E> Response<V, E> fromValue(V value) {
+    if (value == null) {
+      throw new NullPointerException("Parameter 'value' must be not null.");
+    }
+    return new Success<V, E>(value);
+  }
+
+  public static <V, E> Response<V, E> fromError(E error) {
+    if (error == null) {
+      throw new NullPointerException("Parameter 'error' must be not null.");
+    }
+    return new Error<V, E>(error);
+  }
+
+  @SuppressWarnings("unchecked")
+  public static <V, E> Response<V, E> empty() {
+    return (Response<V, E>) EMPTY;
+  }
+
+  private Response() {
+  }
+
+  public abstract boolean isEmpty();
+
+  public abstract boolean isSuccess();
+
+  public abstract V getValue();
+
+  public abstract E getError();
+
+  private final static class Success<V, E> extends Response<V, E> {
+    private final V value;
+
+    private Success(V value) {
+      this.value = value;
+    }
+
+    @Override
+    public boolean isEmpty() {
+      return false;
+    }
+
+    @Override
+    public boolean isSuccess() {
+      return true;
+    }
+
+    @Override
+    public V getValue() {
+      return value;
+    }
+
+    @Override
+    public E getError() {
+      throw notAllowedOperationException();
+    }
+
+    private IllegalStateException notAllowedOperationException() {
+      return new IllegalStateException("Operation is not allowed for success response");
+    }
+  }
+
+  private final static class Error<V, E> extends Response<V, E> {
+    private final E error;
+
+    private Error(E error) {
+      this.error = error;
+    }
+
+    @Override
+    public boolean isEmpty() {
+      return false;
+    }
+
+    @Override
+    public boolean isSuccess() {
+      return false;
+    }
+
+    @Override
+    public V getValue() {
+      throw notAllowedOperationException();
+    }
+
+    @Override
+    public E getError() {
+      return error;
+    }
+
+    private static IllegalStateException notAllowedOperationException() {
+      return new IllegalStateException("Operation is not allowed for error response");
+    }
+  }
+
+  private final static class Empty<V, E> extends Response<V, E> {
+    @Override
+    public boolean isEmpty() {
+      return true;
+    }
+
+    @Override
+    public boolean isSuccess() {
+      throw notAllowedOperationException();
+    }
+
+    @Override
+    public V getValue() {
+      throw notAllowedOperationException();
+    }
+
+    @Override
+    public E getError() {
+      throw notAllowedOperationException();
+    }
+
+    private static IllegalStateException notAllowedOperationException() {
+      return new IllegalStateException("Operation is not allowed for empty response");
+    }
+  }
+}
+{% endhighlight %}
+
+*ResponseTest.java:*
+{% highlight java %}
+package factory2;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
+import org.junit.Test;
+
+public class ResponseTest {
+  @Test
+  public void testResponseSuccess() {
+    success(150);
+  }
+
+  @Test(expected = NullPointerException.class)
+  public void testResponseSuccessWithNull() {
+    success(null);
+  }
+
+  @Test
+  public void testResponseError() {
+    error("test error");
+  }
+
+  @Test(expected = NullPointerException.class)
+  public void testResponseErrorWithNull() {
+    error(null);
+  }
+
+  @Test
+  public void testResponseEmpty() {
+    empty();
+  }
+
+  @Test
+  public void testIsEmptyWithSuccess() {
+    Response<Integer, String> success = success(135);
+    assertFalse(success.isEmpty());
+  }
+
+  @Test
+  public void testIsEmptyWithError() {
+    Response<Integer, String> error = error("validation error");
+    assertFalse(error.isEmpty());
+  }
+
+  @Test
+  public void testIsEmptyWithEmpty() {
+    Response<Integer, String> empty = empty();
+    assertTrue(empty.isEmpty());
+  }
+
+  @Test
+  public void testIsSuccessWithSuccess() {
+    Response<Integer, String> success = success(763);
+    assertTrue(success.isSuccess());
+  }
+
+  @Test
+  public void testIsSuccessWithError() {
+    Response<Integer, String> error = error("db error");
+    assertFalse(error.isSuccess());
+  }
+
+  @Test(expected = IllegalStateException.class)
+  public void testIsSuccessWithEmpty() {
+    Response<Integer, String> empty = empty();
+    empty.isSuccess();
+  }
+
+  @Test
+  public void testGetValueWithSuccess() {
+    Response<Integer, String> success = success(921);
+    assertEquals(Integer.valueOf(921), success.getValue());
+  }
+
+  @Test(expected = IllegalStateException.class)
+  public void testGetValueWithError() {
+    Response<Integer, String> error = error("out of service");
+    error.getValue();
+  }
+
+  @Test(expected = IllegalStateException.class)
+  public void testGetValueWithEmpty() {
+    Response<Integer, String> empty = empty();
+    empty.getValue();
+  }
+
+  @Test(expected = IllegalStateException.class)
+  public void testGetErrorWithSuccess() {
+    Response<Integer, String> success = success(48150);
+    success.getError();
+  }
+
+  @Test
+  public void testGetErrorWithError() {
+    Response<Integer, String> error = error("application is broken");
+    assertEquals("application is broken", error.getError());
+  }
+
+  @Test(expected = IllegalStateException.class)
+  public void testGetErrorWithEmpty() {
+    Response<Integer, String> empty = empty();
+    empty.getError();
+  }
+
+  private static Response<Integer, String> success(Integer successValue) {
+    return Response.fromValue(successValue);
+  }
+
+  private static Response<Integer, String> error(String errorMessage) {
+    return Response.fromError(errorMessage);
+  }
+
+  private static Response<Integer, String> empty() {
+    return Response.empty();
+  }
+}
+{% endhighlight %}
+  
+Интерфейс остался прежним, соответственно, тесты те же, что и в предыдущем примере. Последний пример имеет не только более опрятную реализацию, к тому же, по производительности и расходу памяти он более оптимален: поведение большинства методов определяется статически в зависимости от конкретной реализации, а ссылки сами по себе (даже пустые) используют память. Более того, в качестве пустого контейнера (`Response.Empty`) всегда возвращается один и тот же объект, который создается только один раз (такой себе [Синглтон][2]). Кстати, в качестве разминки, советую попробовать реализовать правильные методы [equals][3] и [hashCode][4] для нашего `Response` (советую начать с тестов). Думаю, что никто не будет отрицать преимуществ использования паттерна *Фабричный метод* для нашей задачи. Лично у меня для себя есть такое правило: если есть частично или полностью [Immutable object][5], то всегда стоит подумать о том, чтобы сделать *фабричный метод* вместо конструктора, даже когда он явно делает то же самое, что и конструктор. Да, я знаю, это может немного противоречить принципу [YAGNI][6]. Но в таких случаях я себя оправдываю тем, что статические методы выглядят красивее и порой удобней читаются. Далее, в награду, у меня всегда есть возможность что-то поменять внутри класса или сделать некую оптимизацию не затрагивая клиентский код. В нагрузку, советую посмотреть на реализацию метода [Integer.valueOf()][7]. Для меня, в свое время, это было очень познавательно.
 
 [1]: http://en.wikipedia.org/wiki/Factory_method_pattern#Encapsulation 
 [2]: http://ru.wikipedia.org/wiki/%D0%9E%D0%B4%D0%B8%D0%BD%D0%BE%D1%87%D0%BA%D0%B0_(%D1%88%D0%B0%D0%B1%D0%BB%D0%BE%D0%BD_%D0%BF%D1%80%D0%BE%D0%B5%D0%BA%D1%82%D0%B8%D1%80%D0%BE%D0%B2%D0%B0%D0%BD%D0%B8%D1%8F) 
