@@ -1,6 +1,7 @@
 ---
 layout: post
 title: How Scala compiler stores meta information
+categories: [reflection, compiler, bytecode, scala]
 poster: {url: 'http://3.bp.blogspot.com/_MzPDIAgS1ow/TPtvknz8OgI/AAAAAAAARLI/mShNq4h6jxc/s320/scala.jpg', width: '320px', height: '253px'}
 date: 2010-12-05 12:59:00 +0200
 ---

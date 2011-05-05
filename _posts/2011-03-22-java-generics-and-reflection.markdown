@@ -1,6 +1,7 @@
 ---
 layout: post
 title: Java Generics and Reflection
+categories: [reflection, java, generics]
 date: 2011-03-22 09:46:00 +0200
 ---
 \"Officially\" Java does not have information about generic types in runtime. But it\'s not absolutely true. There are some cases, which are utilized by smart frameworks like Spring and Google Guice. Let\'s explore these cases!

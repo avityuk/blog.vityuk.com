@@ -1,6 +1,7 @@
 ---
 layout: post
 title: Lost Stack Trace
+categories: [java, debugging]
 date: 2011-03-31 21:41:00 +0300
 ---
 Last week our team faced another `NullPointerException` in our	development environment. As usual I started investigate log files to get full stack trace and find out reason of exception. Surprisingly, but the message I saw in log file was like:

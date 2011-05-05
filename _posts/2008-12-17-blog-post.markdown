@@ -1,6 +1,7 @@
 ---
 layout: post
 title: Подмена Синглтонов
+categories: [java, mock, pattern, testing]
 poster: {url: 'http://2.bp.blogspot.com/_MzPDIAgS1ow/SYWiiNXWgDI/AAAAAAAAJr4/rMPEwUK1HsM/s320/sngleton.jpg', width: '320px', height: '234px'}
 date: 2008-12-17 07:14:00 +0200
 ---

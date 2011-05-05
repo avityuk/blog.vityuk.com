@@ -1,6 +1,7 @@
 ---
 layout: post
 title: Java Formatters Best Practices
+categories: [java, formatting, multithreading]
 date: 2011-03-26 17:54:00 +0200
 ---
 Java API has set of classes for formatting and parsing dates and
