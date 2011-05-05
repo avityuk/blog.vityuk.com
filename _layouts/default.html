@@ -7,6 +7,9 @@
 <meta name="author" content="Andrey Vityuk" />
 <link rel="stylesheet" type="text/css" href="/stylesheets/default.css" />
 <link rel="stylesheet" type="text/css" href="/stylesheets/syntax.css" />
+{% if page.id %}
+<link rel="canonical" href="http://avityuk.github.com{{ page.url }}">
+{% endif %}
 <link rel="alternate" type="application/atom+xml" href="http://avityuk.github.com/atom.xml" />
 
 <title>{{ page.title }}</title>
