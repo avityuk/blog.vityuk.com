@@ -1,7 +1,7 @@
 ---
 layout: post
 title: Logging JDBC calls
-categories: [java, logging, jdbc]
+tags: [java, logging, jdbc]
 date: 2011-03-07 16:55:00 +0200
 ---
 Today I found some my drafts of JDBC logger library. And finally decided to upload it on [Google code][1]. The main idea of the library is to transparently intercept JDBC calls and log queries (even for PreparedStatement).

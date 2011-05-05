@@ -1,7 +1,7 @@
 ---
 layout: post
 title: Чем опасно логирование
-categories: [performance, java, logging]
+tags: [performance, java, logging]
 poster: {url: 'http://1.bp.blogspot.com/_MzPDIAgS1ow/SY_wAoSR8wI/AAAAAAAAJt4/m0NJppz2yfQ/s320/The_Most_poisonous_frog.jpg', width: '320px', height: '230px'}
 date: 2009-02-15 10:53:00 +0200
 ---

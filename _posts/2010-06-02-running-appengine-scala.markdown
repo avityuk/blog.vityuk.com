@@ -1,7 +1,7 @@
 ---
 layout: post
 title: Getting started with AppEngine + Scala
-categories: [sbt, google, web, scala, appengine]
+tags: [sbt, google, web, scala, appengine]
 poster: {url: 'http://2.bp.blogspot.com/_MzPDIAgS1ow/TAaZmre_WXI/AAAAAAAAOFc/a2_E3nAacQI/s320/scala_appengine.png', width: '315px', height: '186px'}
 date: 2010-06-02 21:41:00 +0300
 ---
