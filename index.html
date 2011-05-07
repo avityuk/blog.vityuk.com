@@ -10,9 +10,4 @@ title: Andrey's Dev Blog
       <li><h3 class="post-title"><a href="{{ post.url }}" rel="bookmark">{{ post.title }}</a></h3><span>{{ post.date | date_to_string }}</span></li>
     {% endfor %}
   </ul>
-  <ul class="tags">
-    {% for tag in site.tags %}
-      <li>{{ tag[0] }}</li>
-    {% endfor %}
-  </ul>  
 </div>

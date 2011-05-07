@@ -70,16 +70,13 @@ h2 {
 	margin: 30px;
 }
 
-#tags ul {
-	line-height: 1.2;
-	margin: 0;
-	padding: 0 0 0 1.25em;
+#tags-cloud {
+	text-align: center;
+	font-size: 130%;
 }
 
-#tags li {
-	margin: 0;
-	padding: 0.25em 0;
-	text-indent: 0;
+#tags-cloud span {
+	margin: 0 0.3em;
 }
 
 h3.post-title {
