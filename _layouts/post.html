@@ -1,8 +1,8 @@
 ---
 layout: default
 ---
-<div id="post">
-	<h2><a href="{{page.url}}" rel="bookmark">{{ page.title }}</a></h2>
+<div class="post-body">
+	<h2 class="post-title"><a href="{{page.url}}" rel="bookmark">{{ page.title }}</a></h2>
 	{% if page.image %}
 	<div id="poster">
 		<img src="{{ page.image.url }}" width="{{ page.image.width }}" height="{{ page.image.height }}" />

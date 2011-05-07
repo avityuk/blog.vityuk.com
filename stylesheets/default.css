@@ -1,0 +1,45 @@
+body {
+	background-color: white;
+	font: 12px arial,tahoma,helvetica,freesans,clean,sans-serif;
+}
+
+a {
+	text-decoration: none;
+}
+
+a:link {
+	color: #249FA3;
+}
+
+a:visited {
+	color: #7C93A1;
+}
+
+a:hover {
+	color: #5DC2C0;
+}
+
+
+pre, code {
+	font: 12px Monaco, "Courier New", "DejaVu Sans Mono", "Bitstream Vera Sans Mono", monospace;
+}
+
+code {
+	background-color: #f8f8ff;
+	border: 1px solid #dedede;
+	padding: 0 .2em;
+}
+
+pre code {
+	display: block;
+	padding: 0.5em;
+}
+
+
+h2.post-title {
+	font-size: 22px;	
+}
+
+.post-body {
+	font-size: 110%;
+}
