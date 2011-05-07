@@ -1,0 +1,8 @@
+<div id="tags">
+	<h2>Tags</h2>
+	<ul>
+	{% for tag in site.tags %}
+		<li><a href="/tags/{{tag[0] | replace:' ', '-' | downcase }}" rel="tag">{{ tag[0] }}</a></li>
+	{% endfor %}
+	</ul>
+</div>
