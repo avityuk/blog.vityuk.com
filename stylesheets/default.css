@@ -33,13 +33,55 @@ code {
 pre code {
 	display: block;
 	padding: 0.5em;
+	white-space: pre-wrap;
 }
 
-
-h2.post-title {
-	font-size: 22px;	
+h2 {
+	color: #000000;
+	font-size: 11px;
+	font-style: bold;
+	margin: 0 0 1em;
+	text-transform: uppercase;
 }
 
-.post-body {
+#main {
+	width: 942px;
+	margin: 0 auto 60px;
+}
+
+#content {
+	float: left;
+	width: 680px;
+	border-right: 1px solid #DDDDDD;
+}
+
+#post {
 	font-size: 110%;
+	padding: 30px;
+}
+
+#sidebar {
+	float: left;
+	height: 100%;
+	width: 260px;
+}
+
+#tags {
+	margin: 30px;
+}
+
+#tags ul {
+	line-height: 1.2;
+	margin: 0;
+	padding: 0 0 0 1.25em;
+}
+
+#tags li {
+	margin: 0;
+	padding: 0.25em 0;
+	text-indent: 0;
+}
+
+h3.post-title {
+	font-size: 22px;	
 }

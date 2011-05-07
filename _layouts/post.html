@@ -1,21 +1,22 @@
 ---
 layout: default
 ---
-<div class="post-body">
-	<h2 class="post-title"><a href="{{page.url}}" rel="bookmark">{{ page.title }}</a></h2>
+<div id="post">
+	<h3 class="post-title"><a href="{{page.url}}" rel="bookmark">{{ page.title }}</a></h3>
 	{% if page.image %}
 	<div id="poster">
 		<img src="{{ page.image.url }}" width="{{ page.image.width }}" height="{{ page.image.height }}" />
 	</div>
 	{% endif %}
 	{{ content }}
-</div>
-<div class="post-meta">
-	<span class="date">{{ page.date | date_to_string }} | </span>
-	<span class="tags">
-		Tags:
-		{% for tag in page.tags limit: 3 %}
-			<a href="/tags/{{tag | replace:' ', '-' | downcase }}" rel="tag">{{ tag }}{% if forloop.last == false %}, {%endif %}</a>
-		{% endfor %}
-	</span>
+
+	<div class="post-meta">
+		<span class="date">{{ page.date | date_to_string }} | </span>
+		<span class="tags">
+			Tags:
+			{% for tag in page.tags limit: 3 %}
+				<a href="/tags/{{tag | replace:' ', '-' | downcase }}" rel="tag">{{ tag }}{% if forloop.last == false %}, {%endif %}</a>
+			{% endfor %}
+		</span>
+	</div>
 </div>

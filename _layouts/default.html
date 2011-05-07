@@ -18,8 +18,14 @@
 	<div id="header">
 	</div>
 
-	<div id="content">
-		{{ content }}
+	<div id="main">
+		<div id="content">
+			{{ content }}
+		</div>
+		<div id="sidebar">
+			{% include tags.html %}
+		</div>
+		<div style="clear: both;"></div>
 	</div>
 
 	<div id="footer">
