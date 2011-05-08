@@ -14,7 +14,7 @@ module Jekyll
       tags.each {|tag| weights[tag[0]] = tag[1].length/avg}
       tag_names = tags.keys.sort
       tag_names.each do |tag|
-        html << "<span style=\"font-size: #{sprintf("%d", weights[tag] * 100)}%\"><a href=\"/tags/#{tag}/\">#{tag}</a></span>\n"
+        html << "<span style=\"font-size: #{sprintf("%d", weights[tag] * 100)}%\"><a href=\"/tags/#{tag.gsub(/\s/, "-").gsub(/[^\w-]/, '').downcase}/\">#{tag}</a></span>\n"
       end
       html
     end
