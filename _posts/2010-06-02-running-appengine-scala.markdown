@@ -10,7 +10,7 @@ This time, after long time-out I decided to continue blogging in english. Sorry 
 <!-- more -->
 
 First of all you need to [install simple-build-tool][5].  
-Let\'s create our project dir:
+Let's create our project dir:
 
 	$ mkdir gae_scala
 
@@ -41,7 +41,7 @@ Getting org.scala-tools.sbt sbt_2.7.7 0.7.3 ...
 ~~~~~
 
 Now we have initial project skeleton. You can run *help* command and read about existsing commands.  
-There is existing [google app engine plugin for sbt][6]. Let\'s build and install it. Run in some temporary directory:
+There is existing [google app engine plugin for sbt][6]. Let's build and install it. Run in some temporary directory:
  
 	$ git clone git://github.com/Yasushi/sbt-appengine-plugin.git
 	$ cd sbt-appengine-plugin

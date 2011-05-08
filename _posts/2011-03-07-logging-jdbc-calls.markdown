@@ -14,7 +14,7 @@ It's always painful to analyze log with JDBC calls:
 
 Looks not very useful unless you are printing parameters passed to `PreparedStatement`. Even some of my colleagues pointed that they hate `PreparedStatement` because of it.
 
-Pretty straightforward solution is to intercept JDBC calls and create some simple log statement. That\'s what actually library is doing. I won\'t describe it\'s usage here, since I already did it on [usage page][2]. In short the only thing you have to do is to wrap data source: `new LoggableDataSource(ds, new Slf4JLogger())`. And that\'s what you automatically get:
+Pretty straightforward solution is to intercept JDBC calls and create some simple log statement. That's what actually library is doing. I won't describe it's usage here, since I already did it on [usage page][2]. In short the only thing you have to do is to wrap data source: `new LoggableDataSource(ds, new Slf4JLogger())`. And that's what you automatically get:
 
 	394 [main] INFO JDBC - insert into TEST (NAME, POS) VALUES(name-0, 0)
 

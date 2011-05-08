@@ -8,7 +8,7 @@ Last week our team faced another `NullPointerException` in our	development envir
 
 	ERROR: MyClass - java.lang.NullPointerException
 
-I realized that there was something wrong in logging code, hence we are loosing stack trace. I checked code which produces this log and didn\'t find anything unusual. Then I asked my colleague to double check it may be I miss something. He reproduced the same exception on his desktop and showed me nice log statement with full stack trace. We started to feel that there is some magic behind that. Whole team started googling and finally we found the answer.
+I realized that there was something wrong in logging code, hence we are loosing stack trace. I checked code which produces this log and didn't find anything unusual. Then I asked my colleague to double check it may be I miss something. He reproduced the same exception on his desktop and showed me nice log statement with full stack trace. We started to feel that there is some magic behind that. Whole team started googling and finally we found the answer.
 
 <!-- more -->
 

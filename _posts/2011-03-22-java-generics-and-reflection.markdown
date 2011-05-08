@@ -13,7 +13,7 @@ As usual for reflection, there is special interface: `java.lang.reflect.Type`. T
 * `java.lang.Class` - represents usual class
 * `java.lang.reflect.ParameterizedType` - class with generic parameter (List<String>)
 * `java.lang.reflect.TypeVariable` - generic type literal (List<T>, T - type variable)
-* `java.lang.reflect.WildcardType` - wildcard type (List<? extends Number>, \"? extends Number\" - wildcard type)
+* `java.lang.reflect.WildcardType` - wildcard type (List<? extends Number>, "? extends Number" - wildcard type)
 * `java.lang.reflect.GenericArrayType` - type for generic array (T\[\], T - array type)
 
 Below is utility class demostrating processing of `java.lang.reflect.Type`. I will use it in further examples for getting string representation of declared types.
