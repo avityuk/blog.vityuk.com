@@ -3,4 +3,4 @@ permalink: /:year/:month/:title.html
 markdown: kramdown
 pygments: true
 base_url: http://avityuk.github.com
-tag_title_prefix: Tag
+tag_title_prefix: 'Tag: '
