@@ -105,12 +105,18 @@ a#blog-title:hover {
 	border-bottom: 1px solid #DDDDDD;
 }
 
-#post {
+.post {
 	font-size: 110%;
+	margin-bottom: 30px;
 }
 
-#post-image {
+.post-image {
 	text-align: center;
+	margin: 5px;
+}
+
+.post-tags {
+	margin: 10px;
 }
 
 #tags {
