@@ -58,6 +58,10 @@ a#blog-title:visited {
 	color: #249FA3;
 }
 
+a#blog-title:hover {
+	color: #5DC2C0;
+}
+
 #main {
 	width: 942px;
 	margin: 0 auto 60px;
