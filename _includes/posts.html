@@ -11,12 +11,25 @@
 		{{ post.content | preview }}
 		<a href="{{ post.url }}">Read More &raquo;</a>
 
-		<div class="post-tags">
-			Tags:
-			{% for tag in post.tags %}
-				<a href="/tags/{{tag | replace:' ', '-' | downcase }}" rel="tag">{{ tag }}{% if forloop.last == false %}, {%endif %}</a>
-			{% endfor %}
+		<div class="post-meta">
+			<div class="post-tags">
+				Tags:
+				{% for tag in post.tags %}
+					<a href="/tags/{{tag | replace:' ', '-' | downcase }}" rel="tag">{{ tag }}{% if forloop.last == false %}, {%endif %}</a>
+				{% endfor %}
+			</div>
+			<div class="comments-link"><a href="{{ post.url }}#disqus_thread" data-disqus-identifier="{{ post.id }}" rel="nofollow">View Comments</a></div>
 		</div>
 	</div>
 	{% endfor %}
 </div>
+
+<script type="text/javascript">
+    var disqus_shortname = 'avityuk';
+    (function () {
+        var s = document.createElement('script'); s.async = true;
+        s.type = 'text/javascript';
+        s.src = 'http://' + disqus_shortname + '.disqus.com/count.js';
+        (document.getElementsByTagName('HEAD')[0] || document.getElementsByTagName('BODY')[0]).appendChild(s);
+    }());
+</script>
