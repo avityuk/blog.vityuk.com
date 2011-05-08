@@ -17,7 +17,7 @@ module Liquid
       if text.index(delimiter) != nil
         text.split(delimiter)[0]
       else
-        ''
+        text
       end
     end
   end
