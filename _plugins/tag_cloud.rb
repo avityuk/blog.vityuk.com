@@ -1,26 +1,23 @@
 module Jekyll
-  class TagCloud < Liquid::Tag
+  class TagCloudTag < Liquid::Tag
     safe = true
     
+    def initialize(tag_name, text, tokens)
+      super
+    end
+
     def render(context)
-      tags = context.registers[:site].tags.map{|tag| 
-        { 
-          :tag    => tag[0], 
-          :posts  => tag[1] 
-        } 
-      }
-
-      min_count = tags.min{|a, b| a[:posts].length <=> b[:posts].length }[:posts].length
-      max_count = tags.max{|a, b| a[:posts].length <=> b[:posts].length }[:posts].length
-
-      weights = tags.inject({}){|result, tag| result[tag[:tag]] = ( ((tag[:posts].length - min_count) * (280 - 75)) / (max_count - min_count) ) + 75; result }
-
-      tags.inject("") { |html, tag|
-        html << "<span style=\"font-size: #{sprintf("%d", weights[tag[:tag]])}%\"><a href=\"/tags/#{tag[:tag]}/\" rel=\"tag\">#{tag[:tag]}</a></span>\n"
-        html
-      }
+      html = ""
+      tags = context.registers[:site].tags
+      avg = tags.inject(0.0) {|memo, tag| memo += tag[1].length} / tags.length
+      weights = Hash.new
+      tags.each {|tag| weights[tag[0]] = tag[1].length/avg}
+      tags.each do |tag, posts|
+        html << "<span style=\"font-size: #{sprintf("%d", weights[tag] * 100)}%\"><a href=\"/tags/#{tag}/\">#{tag}</a></span>\n"
+      end
+      html
     end
   end
 end
 
-Liquid::Template.register_tag('tag_cloud', Jekyll::TagCloud)
+Liquid::Template.register_tag('tag_cloud', Jekyll::TagCloudTag)
