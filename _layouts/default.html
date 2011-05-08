@@ -15,23 +15,29 @@
 <title>{{ page.title }}</title>
 </head>
 <body>
-	<div id="header">
-		<h1><a id="blog-title" href="{{site.base_url}}">Andrey Vityuk</a></h1>
-		Tips and walkthroughs on software development
+	<div id="header-wrapper">
+		<div id="header">
+			<h1><a id="blog-title" href="{{site.base_url}}">Andrey Vityuk</a></h1>
+			Tips and walkthroughs on software development
+		</div>
 	</div>
 
-	<div id="main">
-		<div id="content">
-			{{ content }}
+	<div id="main-wrapper">
+		<div id="main">
+			<div id="content">
+				{{ content }}
+			</div>
+			<div id="sidebar">
+				{% include tags.html %}
+			</div>
+			<div style="clear: both;"></div>
 		</div>
-		<div id="sidebar">
-			{% include tags.html %}
-		</div>
-		<div style="clear: both;"></div>
 	</div>
 
-	<div id="footer">
-		Copyright &copy; 2011 All Rights Reserved.
+	<div id="footer-wrapper">
+		<div id="footer">
+			Copyright &copy; 2011 All Rights Reserved.
+		</div>
 	</div>
 </body>
 </html>
