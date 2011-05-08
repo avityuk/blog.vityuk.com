@@ -1,18 +1,11 @@
-html, body {
-	overflow-x: hidden;
-}
-
-body, div, dl, dt, dd, ul, ol, li, h1, h2, h3, h4, h5, h6, pre, form, fieldset, input, textarea, p, blockquote, th, td {
+body, div, dl, dt, dd, ul, ol, li, h1, h2, h3, h4, h5, h6, th, td {
     margin: 0;
     padding: 0;
 }
 
 body {
-	background: none repeat scroll 0 0 white;
 	background-color: white;
 	font: 12px arial,tahoma,helvetica,freesans,clean,sans-serif;
-	margin: 0;
-	padding: 0;
 }
 
 a {
@@ -57,10 +50,12 @@ h2 {
 }
 
 #header {
-	height: 80px;
-	margin: 0;
-	padding: 0 60px;
-	background-color: red;
+	padding: 20px 0 30px 230px;
+	background-color: #EBEBEB;
+}
+
+blog-title:visited {
+	color: #249FA3;
 }
 
 #main {
@@ -77,6 +72,10 @@ h2 {
 
 #post {
 	font-size: 110%;
+}
+
+#post-image {
+	text-align: center;
 }
 
 #sidebar {

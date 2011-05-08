@@ -5,7 +5,7 @@ layout: default
 	<h2 class="date-header">{{ page.date | date: '%A, %B %d, %Y' }}</h2>
 	<h3 class="post-title"><a href="{{ page.url }}" rel="bookmark">{{ page.title }}</a></h3>
 	{% if page.image %}
-	<div id="poster">
+	<div id="post-image">
 		<img src="{{ page.image.url }}" width="{{ page.image.width }}" height="{{ page.image.height }}" />
 	</div>
 	{% endif %}
