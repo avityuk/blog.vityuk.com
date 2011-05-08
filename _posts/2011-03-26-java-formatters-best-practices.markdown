@@ -7,7 +7,8 @@ date: 2011-03-26 17:54:00 +0200
 Java API has set of classes for formatting and parsing dates and
 numbers. Mostly used are: `java.text.DateFormat` and `java.text.NumberFormat`. Often when interviewing candidates I ask them whether JDK date and number formatters are thread-safe. Surprisingly most of them don\'t know the right answer, hence I decided to describe common pitfalls with formatters usage.
 
-<a name="more" />
+<!-- more -->
+
 As you can guess both `DateFormat` and `NumberFormat` are not thread-safe. This is old known Java API design mistake. Nowadays all agreed that they supposed to be immutable instead of mutable. There is awesome alternative for dates - [Joda Time][1]. Which is pretty mature and was taken as a base for [JSR-310][2]. I am personally recommend to stick with Joda Time if you can choose, because on our project we have great impression of using it. But if you have to deal with JDK date (and I don\'t know good alternatives for numbers) you should be ready to use them correctly. Let\'s go over formatting common patterns. In my examples I will use `SimpleDateFormatter` for formatting date. But all examples applicable for `NumberFormat` and for parsing strings.
 
 ### 1. Local format	{#1}
