@@ -124,6 +124,7 @@ a#blog-title:hover {
 }
 
 #tags {
+	text-align: center;
 	margin: 30px;
 }
 
