@@ -1,13 +1,13 @@
 ---
 layout: default
 ---
-<div id="tags">
-	{% for tag in page.tags %}
+{% for tag in page.tags %}
+<div class="tag-posts">
 	<h4><a href="/tags/{{ tag | replace:' ', '-' | downcase }}" name="{{ tag | replace:' ','-' | downcase }}" rel="tag">{{ tag }}</a></h4>
 	<ul>
 		{% for post in site.tags[tag] %}
 			<li><a href="{{post.url}}" rel="bookmark">{{ post.title }}</a></li>
 		{% endfor %}
 	</ul>
-	{% endfor %}
 </div>
+{% endfor %}
