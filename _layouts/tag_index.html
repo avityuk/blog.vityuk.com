@@ -1,11 +1,5 @@
 ---
 layout: default
 ---
-<div id="tag-posts">
-	{% for post in site.tags[page.tag] %}
-	<div class="post">
-		<h2><a href="{{ post.url }}" rel="bookmark">{{ post.title }}</a></h2>
-		{% include post_meta.html %}
-	</div>
-	{% endfor %}
-</div>
+{% assign posts = site.tags[page.tag] %}
+{% include posts.html %}
