@@ -50,11 +50,11 @@ h2 {
 }
 
 #header {
-	padding: 20px 0 30px 230px;
+	padding: 10px 0 20px 230px;
 	background-color: #EBEBEB;
 }
 
-blog-title:visited {
+a#blog-title:visited {
 	color: #249FA3;
 }
 
