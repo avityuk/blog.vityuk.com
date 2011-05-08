@@ -1,6 +1,6 @@
 body, div, dl, dt, dd, ul, ol, li, h1, h2, h3, h4, h5, h6, th, td {
-    margin: 0;
-    padding: 0;
+	margin: 0;
+	padding: 0;
 }
 
 body {
@@ -54,24 +54,9 @@ h2 {
 	background-color: #EBEBEB;
 }
 
-a#blog-title:visited {
-	color: #249FA3;
-}
-
-a#blog-title:hover {
-	color: #5DC2C0;
-}
-
 #main {
 	width: 942px;
 	margin: 0 auto 60px;
-}
-
-#content {
-	float: left;
-	width: 620px;
-	border-right: 1px solid #DDDDDD;
-	padding: 30px;
 }
 
 #footer {
@@ -83,18 +68,32 @@ a#blog-title:hover {
 	padding: 40px 0 40px 230px;
 }
 
+a#blog-title:visited {
+	color: #249FA3;
+}
+
+a#blog-title:hover {
+	color: #5DC2C0;
+}
+
+#content {
+	float: left;
+	width: 620px;
+	margin: 30px;
+}
+
+#sidebar {
+	float: left;
+	width: 260px;
+	border-left: 1px solid #DDDDDD;
+}
+
 #post {
 	font-size: 110%;
 }
 
 #post-image {
 	text-align: center;
-}
-
-#sidebar {
-	float: left;
-	height: 100%;
-	width: 260px;
 }
 
 #tags {
