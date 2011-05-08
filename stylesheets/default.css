@@ -70,6 +70,15 @@ blog-title:visited {
 	padding: 30px;
 }
 
+#footer {
+	background-color: #202020;
+	color: #848484;
+	border-top: 5px solid #CCCCCC;
+	z-index: 1000;
+	font-size: 12px;
+	padding: 40px 0 40px 230px;
+}
+
 #post {
 	font-size: 110%;
 }
