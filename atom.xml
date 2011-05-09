@@ -1,0 +1,23 @@
+---
+---
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+    <title type="text" xml:lang="en">Andrey's blog</title>
+    <link type="application/atom+xml" href="{{ site.base_url }}/atom.xml" rel="self"/>
+    <link type="text/html" href="{{ site.base_url }}/" rel="alternate"/>
+    <updated>{{ site.time | date_to_xmlschema }}</updated>
+    <id>{{ site.base_url }}</id>
+    <author>
+        <name>Andrey Vityuk</name>
+    </author>
+    <rights>Copyright (c) 2011 Andrey Vityuk</rights>
+    {% for post in site.posts limit:20 %}
+    <entry>
+        <title type="text">{{ post.title }}</title>
+        <link href="{{ site.base_url }}{{ post.url }}"/>
+        <updated>{{ post.date | date_to_xmlschema }}</updated>
+        <id>{{ site.base_url }}/{{ post.id }}/</id>
+        <summary type="html">{{ post.content | preview | xml_escape }}</summary>
+    </entry>
+    {% endfor %}
+</feed>
