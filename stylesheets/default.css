@@ -108,6 +108,7 @@ a#blog-title:hover {
 .post {
 	font-size: 110%;
 	margin-bottom: 30px;
+	border-bottom: 1px dotted #DDDDDD;
 }
 
 .post-image {
