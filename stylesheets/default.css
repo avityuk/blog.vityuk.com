@@ -119,6 +119,10 @@ a#blog-title:hover {
 	margin: 10px;
 }
 
+.comments-link {
+	margin-top: 5px;
+}
+
 .tag-posts {
 	margin: 10px;
 }
