@@ -130,15 +130,31 @@ a#blog-title:hover {
 #tags {
 	text-align: center;
 	margin: 30px;
+	border-bottom: 1px dotted #DDDDDD;
 }
 
 #tags-cloud {
 	text-align: center;
 	font-size: 130%;
+	margin-bottom: 10px;
 }
 
 #tags-cloud span {
 	margin: 0 0.3em;
+}
+
+#links {
+	text-align: center;
+	margin: 30px;
+}
+
+img {
+	border: 0;
+}
+
+a.icon-link {
+	background-color: transparent;
+	border: 0;
 }
 
 h2.date-header {
