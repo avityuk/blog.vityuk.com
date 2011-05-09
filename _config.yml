@@ -1,6 +1,9 @@
 auto: true
-permalink: /:year/:month/:title.html
 markdown: kramdown
+exclude: README.markdown
 pygments: true
+lis: true
+
+permalink: /:year/:month/:title.html
 base_url: http://avityuk.github.com
 tag_title_prefix: 'Tag: '
