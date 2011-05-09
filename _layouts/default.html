@@ -5,6 +5,9 @@
 <meta name="description" content="Andrey Vityuk's Dev Blog" />
 <meta name="keywords" content="code,software,development" />
 <meta name="author" content="Andrey Vityuk" />
+
+<title>{{ page.title }}</title>
+
 <link rel="stylesheet" type="text/css" href="/stylesheets/default.css" />
 <link rel="stylesheet" type="text/css" href="/stylesheets/syntax.css" />
 {% if page.id %}
@@ -12,7 +15,18 @@
 {% endif %}
 <link rel="alternate" type="application/atom+xml" href="{{site.base_url}}/atom.xml" />
 
-<title>{{ page.title }}</title>
+<script type="text/javascript">
+ var _gaq = _gaq || [];
+ _gaq.push(['_setAccount', 'UA-7697564-2']);
+ _gaq.push(['_trackPageview']);
+ _gaq.push([‘_trackPageLoadTime’]);
+
+ (function() {
+   var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+   ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+   var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+ })();
+</script>
 </head>
 <body>
 	<div id="header-wrapper">
