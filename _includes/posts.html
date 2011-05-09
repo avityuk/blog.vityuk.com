@@ -8,7 +8,12 @@
 			<img src="{{ post.image.url }}" width="{{ post.image.width }}" height="{{ post.image.height }}" />
 		</div>
 		{% endif %}
-		{{ post.content | preview }}
+
+		{% if page.external %}
+			{{ post.content | markdownify | preview }}
+		{% else %}
+			{{ post.content | preview }}
+		{% endif %}
 		<a href="{{ post.url }}">Read More &raquo;</a>
 
 		<div class="post-meta">

@@ -20,6 +20,7 @@ module Jekyll
 
       tag_title_prefix = site.config['tag_title_prefix'] || 'Tags: '
       self.data['title'] = "#{tag_title_prefix}#{tag}"
+      self.data['external'] = true
     end
   end
 

@@ -1,3 +1,5 @@
+require 'kramdown'
+
 module Liquid
   module ExtendedFilters
 
@@ -19,6 +21,11 @@ module Liquid
       else
         text
       end
+    end
+
+    def markdownify(input)
+      # TODO: reorganize this dependency
+      Kramdown::Document.new(input).to_html
     end
   end
   Liquid::Template.register_filter(ExtendedFilters)
