@@ -5,5 +5,5 @@ pygments: true
 lis: true
 
 permalink: /:year/:month/:title.html
-base_url: http://avityuk.github.com
+base_url: http://blog.vityuk.com
 tag_title_prefix: 'Tag: '
