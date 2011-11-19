@@ -32,6 +32,11 @@
    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
  })();
 </script>
+<script type="text/javascript">
+	$(document).ready(function() {
+		loadSidebarLinks();
+    });
+</script>
 </head>
 <body>
 	<div id="header-wrapper">
@@ -48,6 +53,9 @@
 			</div>
 			<div id="sidebar">
 				{% include tags.html %}
+				<div id="rss">
+					<a class="icon-link" href="http://feeds.feedburner.com/avityuk/blog" title="Subscribe to my RSS feed"><img src="/images/rss.png"/></a>
+				</div>
 				{% include links.html %}
 			</div>
 			<div style="clear: both;"></div>

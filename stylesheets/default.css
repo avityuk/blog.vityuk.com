@@ -144,8 +144,11 @@ a#blog-title:hover {
 	margin: 0 0.3em;
 }
 
+#rss {
+  text-align: center;
+}
+
 #links {
-	text-align: center;
 	margin: 30px;
 }
 
