@@ -2,7 +2,7 @@
 	{% for post in posts %}
 	<div class="post">
 		<h2 class="date-header">{{ post.date | date: '%A, %B %d, %Y' }}</h2>
-		<h3 class="post-title"><a href="{{ post.url }}" rel="bookmark">{{ post.title }}</a></h3>
+		<h1 class="post-title"><a href="{{ post.url }}" rel="bookmark">{{ post.title }}</a></h1>
 		{% if post.image %}
 		<div class="post-image">
 			<img src="{{ post.image.url }}" width="{{ post.image.width }}" height="{{ post.image.height }}" />
